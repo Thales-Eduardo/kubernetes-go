@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetes-deployments
+  namespace: kubernetes-namespace-dev
+  labels:
+    app: kubernetes-go
+spec:
+  selector:
+    matchLabels:
+      app: kubernetes-go
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: "kubernetes-go"
+    spec:
+      containers: # Pods
+        - name: kubernetes-go
+          image: "thaleseduardo/hello:v1"
+          resources:
+            requests:
+              cpu: "0.05"
+              memory: 20Mi
+            limits:
+              cpu: "0.05"
+              memory: 25Mi
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            periodSeconds: 4
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            periodSeconds: 3
+            failureThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            periodSeconds: 5
+            failureThreshold: 1
+            timeoutSeconds: 1
+            successThreshold: 1
+          envFrom:
+            - configMapRef:
+                name: kubernetes-env
+            - secretRef:
+                name: kubernetes-go-secret
+          volumeMounts:
+            - mountPath: "/go/arquivo"
+              name: config
+              readOnly: true
+            - mountPath: "/go/pvc"
+              name: kubernetes-volume
+      volumes:
+        - name: kubernetes-volume
+          persistentVolumeClaim:
+            claimName: kubernetes-pvc
+        - name: config
+          configMap:
+            name: configmap-volume
+            items:
+              - key: name
+                path: "qualquerNome.txt"

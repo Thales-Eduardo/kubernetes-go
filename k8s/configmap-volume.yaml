@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap-volume
+  namespace: kubernetes-namespace-dev
+data:
+  name: |
+    testando0
+    testando1
+    testando2
+    testando3

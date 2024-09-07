@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubernetes-go-service
+  namespace: kubernetes-namespace-dev
+spec:
+  selector:
+    app: kubernetes-go
+  type: ClusterIP
+  ports:
+    - name: kubernetes-go-service
+      port: 80
+      targetPort: 8000
+      protocol: TCP
